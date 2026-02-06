@@ -161,6 +161,7 @@ startOverlay.addEventListener("click", () => {
 window.addEventListener("load", () => {
   buildLyrics();
   measureLyrics();
+  document.body.classList.add("karaoke-ready");
   showInitialLyrics();
   createParticles();
   hidePreload();

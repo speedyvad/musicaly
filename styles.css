@@ -85,12 +85,17 @@ body {
 }
 
 .lyric {
-  opacity: 0;
-  transform: translateX(-16px);
+  opacity: 0.35;
+  transform: translateX(0);
   transition: opacity 1.2s ease, transform 1.2s ease, color 1.2s ease, text-shadow 1.2s ease;
 }
 
-.lyric.visible {
+body.karaoke-ready .lyric {
+  opacity: 0;
+  transform: translateX(-16px);
+}
+
+body.karaoke-ready .lyric.visible {
   opacity: 0.45;
   transform: translateX(0);
 }
