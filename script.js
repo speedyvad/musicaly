@@ -46,8 +46,10 @@ const lyrics = [
   { time: 246, text: "Pra gente, enfim, se amar", emphasis: true }
 ];
 
-const lineHeight = 64;
+let lineHeight = 64;
+let lyricsOffset = 0;
 let currentIndex = 0;
+let lastBurstIndex = -1;
 
 const buildLyrics = () => {
   lyricsTrack.innerHTML = "";
@@ -61,6 +63,18 @@ const buildLyrics = () => {
     span.textContent = line.text;
     lyricsTrack.appendChild(span);
   });
+};
+
+const measureLyrics = () => {
+  const firstLine = lyricsTrack.querySelector(".lyric");
+  if (!firstLine) {
+    return;
+  }
+  const trackStyles = window.getComputedStyle(lyricsTrack);
+  const gap = parseFloat(trackStyles.rowGap || trackStyles.gap || "0");
+  lineHeight = firstLine.getBoundingClientRect().height + gap;
+  const lyricsBox = lyricsTrack.parentElement.getBoundingClientRect();
+  lyricsOffset = lyricsBox.height / 2 - lineHeight / 2;
 };
 
 const updateLyrics = () => {
@@ -77,14 +91,68 @@ const updateLyrics = () => {
     }
   }
 
-  const offset = Math.max(currentIndex - 2, 0) * lineHeight;
+  const nextTime = lyrics[currentIndex + 1]?.time ?? audio.duration;
+  const segment = Math.max(nextTime - lyrics[currentIndex].time, 0.01);
+  const progress = Math.min((time - lyrics[currentIndex].time) / segment, 1);
+  const offset = Math.max((currentIndex + progress) * lineHeight - lyricsOffset, 0);
   lyricsTrack.style.transform = `translateY(-${offset}px)`;
 
   document.querySelectorAll(".lyric").forEach((line, index) => {
     line.classList.toggle("active", index === currentIndex);
   });
 
+  if (currentIndex !== lastBurstIndex && lyrics[currentIndex]?.emphasis) {
+    spawnBurst();
+    lastBurstIndex = currentIndex;
+  }
+
   requestAnimationFrame(updateLyrics);
+};
+
+const showInitialLyrics = () => {
+  const lines = document.querySelectorAll(".lyric");
+  if (!lines.length) {
+    return;
+  }
+  currentIndex = 0;
+  const offset = Math.max(currentIndex * lineHeight - lyricsOffset, 0);
+  lyricsTrack.style.transform = `translateY(-${offset}px)`;
+  lines.forEach((line, index) => {
+    line.classList.toggle("active", index === 0);
+  });
+};
+
+const spawnBurst = () => {
+  const wrapper = lyricsTrack.parentElement;
+  if (!wrapper) {
+    return;
+  }
+  let burstLayer = wrapper.querySelector(".lyrics__burst");
+  if (!burstLayer) {
+    burstLayer = document.createElement("div");
+    burstLayer.className = "lyrics__burst";
+    wrapper.appendChild(burstLayer);
+  }
+  const burstCount = 7;
+  const centerX = wrapper.clientWidth * 0.35;
+  const centerY = wrapper.clientHeight / 2;
+
+  for (let i = 0; i < burstCount; i += 1) {
+    const heart = document.createElement("span");
+    heart.className = "burst-heart";
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 40 + Math.random() * 60;
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+    heart.style.left = `${centerX}px`;
+    heart.style.top = `${centerY}px`;
+    heart.style.setProperty("--x", `${x}px`);
+    heart.style.setProperty("--y", `${y}px`);
+    burstLayer.appendChild(heart);
+    heart.addEventListener("animationend", () => {
+      heart.remove();
+    });
+  }
 };
 
 const createParticles = () => {
@@ -132,7 +200,14 @@ startOverlay.addEventListener("click", () => {
 
 window.addEventListener("load", () => {
   buildLyrics();
+  measureLyrics();
+  showInitialLyrics();
   createParticles();
   hidePreload();
   startExperience();
+});
+
+window.addEventListener("resize", () => {
+  measureLyrics();
+  showInitialLyrics();
 });

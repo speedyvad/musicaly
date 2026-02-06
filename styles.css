@@ -80,13 +80,14 @@ body {
   font-size: clamp(1rem, 2.2vw, 1.7rem);
   line-height: 1.6;
   letter-spacing: 0.04em;
-  transition: transform 1s ease;
+  transition: transform 0.9s ease;
+  will-change: transform;
 }
 
 .lyric {
-  opacity: 0.35;
-  transform: translateX(-10px);
-  transition: opacity 1.5s ease, transform 1.5s ease, color 1.5s ease, text-shadow 1.5s ease;
+  opacity: 0.45;
+  transform: translateX(0);
+  transition: opacity 0.8s ease, transform 0.8s ease, color 0.8s ease, text-shadow 0.8s ease;
 }
 
 .lyric.active {
@@ -101,6 +102,48 @@ body {
   color: var(--rose);
 }
 
+.lyrics__burst {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.burst-heart {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, #ffe9f0, #ff8fa8);
+  transform: rotate(45deg);
+  border-radius: 4px;
+  opacity: 0;
+  animation: burst 1.4s ease-out forwards;
+  box-shadow: 0 0 12px rgba(255, 160, 180, 0.6);
+}
+
+.burst-heart::before,
+.burst-heart::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.burst-heart::before {
+  top: -7px;
+  left: 0;
+}
+
+.burst-heart::after {
+  left: -7px;
+  top: 0;
+}
+
 .tree {
   position: relative;
   display: grid;
@@ -111,6 +154,8 @@ body {
   width: min(90vw, 520px);
   height: 100%;
   max-height: 100vh;
+  animation: grow 28s linear infinite;
+  transform-origin: 50% 85%;
 }
 
 .tree__branch {
@@ -118,9 +163,9 @@ body {
   stroke: rgba(255, 180, 195, 0.5);
   stroke-width: 2.5;
   stroke-linecap: round;
-  stroke-dasharray: 1200;
-  stroke-dashoffset: 1200;
-  animation: draw 12s ease forwards;
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: draw 18s linear infinite;
 }
 
 .tree__branch:nth-of-type(2) {
@@ -134,6 +179,7 @@ body {
 .tree__branch:nth-of-type(4) {
   animation-delay: 5s;
 }
+
 
 .tree__hearts .heart {
   fill: url(#heartGlow);
@@ -216,8 +262,37 @@ body {
 }
 
 @keyframes draw {
-  to {
-    stroke-dashoffset: 0;
+  0% {
+    stroke-dashoffset: 1400;
+  }
+  100% {
+    stroke-dashoffset: -1400;
+  }
+}
+
+@keyframes grow {
+  0% {
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    transform: scale(1.18) translateY(-30px);
+  }
+}
+
+@keyframes burst {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6) rotate(45deg);
+    filter: blur(2px);
+  }
+  30% {
+    opacity: 1;
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(1.2) rotate(45deg);
+    filter: blur(3px);
   }
 }
 
