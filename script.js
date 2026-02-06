@@ -229,17 +229,23 @@ startOverlay.addEventListener("click", () => {
   startExperience();
 });
 
+const hydrateLyrics = () => {
+  measureLyrics();
+  showInitialLyrics();
+};
+
 window.addEventListener("load", () => {
   buildLyrics();
-  measureLyrics();
   document.body.classList.add("karaoke-ready");
-  showInitialLyrics();
+  requestAnimationFrame(hydrateLyrics);
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(hydrateLyrics);
+  }
   createParticles();
   hidePreload();
   startExperience();
 });
 
 window.addEventListener("resize", () => {
-  measureLyrics();
-  showInitialLyrics();
+  hydrateLyrics();
 });

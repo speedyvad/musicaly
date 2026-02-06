@@ -101,12 +101,12 @@ body {
 }
 
 body.karaoke-ready .lyric {
-  opacity: 0;
-  transform: translateX(-16px);
+  opacity: 0.18;
+  transform: translateX(-10px);
 }
 
 body.karaoke-ready .lyric.visible {
-  opacity: 0.45;
+  opacity: 0.55;
   transform: translateX(0);
 }
 
