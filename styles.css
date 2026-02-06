@@ -94,7 +94,7 @@ body {
 }
 
 .lyric__word {
-  opacity: 0;
+  opacity: 0.25;
   transform: translateY(6px);
   display: inline-block;
   transition: opacity 0.4s ease, transform 0.4s ease;
