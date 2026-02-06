@@ -88,6 +88,19 @@ body {
   opacity: 0.45;
   transform: translateX(0);
   transition: opacity 0.8s ease, transform 0.8s ease, color 0.8s ease, text-shadow 0.8s ease;
+  opacity: 0.35;
+  transform: translateX(0);
+  transition: opacity 1.2s ease, transform 1.2s ease, color 1.2s ease, text-shadow 1.2s ease;
+}
+
+body.karaoke-ready .lyric {
+  opacity: 0;
+  transform: translateX(-16px);
+}
+
+body.karaoke-ready .lyric.visible {
+  opacity: 0.45;
+  transform: translateX(0);
 }
 
 .lyric.active {

@@ -95,9 +95,11 @@ const updateLyrics = () => {
   const segment = Math.max(nextTime - lyrics[currentIndex].time, 0.01);
   const progress = Math.min((time - lyrics[currentIndex].time) / segment, 1);
   const offset = Math.max((currentIndex + progress) * lineHeight - lyricsOffset, 0);
+  const offset = Math.max(currentIndex * lineHeight - lyricsOffset, 0);
   lyricsTrack.style.transform = `translateY(-${offset}px)`;
 
   document.querySelectorAll(".lyric").forEach((line, index) => {
+    line.classList.toggle("visible", index <= currentIndex);
     line.classList.toggle("active", index === currentIndex);
   });
 
@@ -118,6 +120,7 @@ const showInitialLyrics = () => {
   const offset = Math.max(currentIndex * lineHeight - lyricsOffset, 0);
   lyricsTrack.style.transform = `translateY(-${offset}px)`;
   lines.forEach((line, index) => {
+    line.classList.toggle("visible", index === 0);
     line.classList.toggle("active", index === 0);
   });
 };
@@ -201,6 +204,7 @@ startOverlay.addEventListener("click", () => {
 window.addEventListener("load", () => {
   buildLyrics();
   measureLyrics();
+  document.body.classList.add("karaoke-ready");
   showInitialLyrics();
   createParticles();
   hidePreload();
