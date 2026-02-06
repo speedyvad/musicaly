@@ -85,6 +85,9 @@ body {
 }
 
 .lyric {
+  opacity: 0.45;
+  transform: translateX(0);
+  transition: opacity 0.8s ease, transform 0.8s ease, color 0.8s ease, text-shadow 0.8s ease;
   opacity: 0.35;
   transform: translateX(0);
   transition: opacity 1.2s ease, transform 1.2s ease, color 1.2s ease, text-shadow 1.2s ease;
@@ -110,6 +113,48 @@ body.karaoke-ready .lyric.visible {
 .lyric.emphasis {
   font-weight: 600;
   color: var(--rose);
+}
+
+.lyrics__burst {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.burst-heart {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, #ffe9f0, #ff8fa8);
+  transform: rotate(45deg);
+  border-radius: 4px;
+  opacity: 0;
+  animation: burst 1.4s ease-out forwards;
+  box-shadow: 0 0 12px rgba(255, 160, 180, 0.6);
+}
+
+.burst-heart::before,
+.burst-heart::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: inherit;
+}
+
+.burst-heart::before {
+  top: -7px;
+  left: 0;
+}
+
+.burst-heart::after {
+  left: -7px;
+  top: 0;
 }
 
 .tree {
@@ -244,6 +289,23 @@ body.karaoke-ready .lyric.visible {
   }
   100% {
     transform: scale(1.18) translateY(-30px);
+  }
+}
+
+@keyframes burst {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6) rotate(45deg);
+    filter: blur(2px);
+  }
+  30% {
+    opacity: 1;
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) scale(1.2) rotate(45deg);
+    filter: blur(3px);
   }
 }
 

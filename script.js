@@ -49,6 +49,7 @@ const lyrics = [
 let lineHeight = 64;
 let lyricsOffset = 0;
 let currentIndex = 0;
+let lastBurstIndex = -1;
 
 const buildLyrics = () => {
   lyricsTrack.innerHTML = "";
@@ -90,6 +91,10 @@ const updateLyrics = () => {
     }
   }
 
+  const nextTime = lyrics[currentIndex + 1]?.time ?? audio.duration;
+  const segment = Math.max(nextTime - lyrics[currentIndex].time, 0.01);
+  const progress = Math.min((time - lyrics[currentIndex].time) / segment, 1);
+  const offset = Math.max((currentIndex + progress) * lineHeight - lyricsOffset, 0);
   const offset = Math.max(currentIndex * lineHeight - lyricsOffset, 0);
   lyricsTrack.style.transform = `translateY(-${offset}px)`;
 
@@ -97,6 +102,11 @@ const updateLyrics = () => {
     line.classList.toggle("visible", index <= currentIndex);
     line.classList.toggle("active", index === currentIndex);
   });
+
+  if (currentIndex !== lastBurstIndex && lyrics[currentIndex]?.emphasis) {
+    spawnBurst();
+    lastBurstIndex = currentIndex;
+  }
 
   requestAnimationFrame(updateLyrics);
 };
@@ -113,6 +123,39 @@ const showInitialLyrics = () => {
     line.classList.toggle("visible", index === 0);
     line.classList.toggle("active", index === 0);
   });
+};
+
+const spawnBurst = () => {
+  const wrapper = lyricsTrack.parentElement;
+  if (!wrapper) {
+    return;
+  }
+  let burstLayer = wrapper.querySelector(".lyrics__burst");
+  if (!burstLayer) {
+    burstLayer = document.createElement("div");
+    burstLayer.className = "lyrics__burst";
+    wrapper.appendChild(burstLayer);
+  }
+  const burstCount = 7;
+  const centerX = wrapper.clientWidth * 0.35;
+  const centerY = wrapper.clientHeight / 2;
+
+  for (let i = 0; i < burstCount; i += 1) {
+    const heart = document.createElement("span");
+    heart.className = "burst-heart";
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 40 + Math.random() * 60;
+    const x = Math.cos(angle) * distance;
+    const y = Math.sin(angle) * distance;
+    heart.style.left = `${centerX}px`;
+    heart.style.top = `${centerY}px`;
+    heart.style.setProperty("--x", `${x}px`);
+    heart.style.setProperty("--y", `${y}px`);
+    burstLayer.appendChild(heart);
+    heart.addEventListener("animationend", () => {
+      heart.remove();
+    });
+  }
 };
 
 const createParticles = () => {
