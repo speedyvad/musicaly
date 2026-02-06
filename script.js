@@ -46,7 +46,8 @@ const lyrics = [
   { time: 246, text: "Pra gente, enfim, se amar", emphasis: true }
 ];
 
-const lineHeight = 64;
+let lineHeight = 64;
+let lyricsOffset = 0;
 let currentIndex = 0;
 
 const buildLyrics = () => {
@@ -63,6 +64,18 @@ const buildLyrics = () => {
   });
 };
 
+const measureLyrics = () => {
+  const firstLine = lyricsTrack.querySelector(".lyric");
+  if (!firstLine) {
+    return;
+  }
+  const trackStyles = window.getComputedStyle(lyricsTrack);
+  const gap = parseFloat(trackStyles.rowGap || trackStyles.gap || "0");
+  lineHeight = firstLine.getBoundingClientRect().height + gap;
+  const lyricsBox = lyricsTrack.parentElement.getBoundingClientRect();
+  lyricsOffset = lyricsBox.height / 2 - lineHeight / 2;
+};
+
 const updateLyrics = () => {
   if (!audio.duration || audio.paused) {
     requestAnimationFrame(updateLyrics);
@@ -77,14 +90,29 @@ const updateLyrics = () => {
     }
   }
 
-  const offset = Math.max(currentIndex - 2, 0) * lineHeight;
+  const offset = Math.max(currentIndex * lineHeight - lyricsOffset, 0);
   lyricsTrack.style.transform = `translateY(-${offset}px)`;
 
   document.querySelectorAll(".lyric").forEach((line, index) => {
+    line.classList.toggle("visible", index <= currentIndex);
     line.classList.toggle("active", index === currentIndex);
   });
 
   requestAnimationFrame(updateLyrics);
+};
+
+const showInitialLyrics = () => {
+  const lines = document.querySelectorAll(".lyric");
+  if (!lines.length) {
+    return;
+  }
+  currentIndex = 0;
+  const offset = Math.max(currentIndex * lineHeight - lyricsOffset, 0);
+  lyricsTrack.style.transform = `translateY(-${offset}px)`;
+  lines.forEach((line, index) => {
+    line.classList.toggle("visible", index === 0);
+    line.classList.toggle("active", index === 0);
+  });
 };
 
 const createParticles = () => {
@@ -132,7 +160,14 @@ startOverlay.addEventListener("click", () => {
 
 window.addEventListener("load", () => {
   buildLyrics();
+  measureLyrics();
+  showInitialLyrics();
   createParticles();
   hidePreload();
   startExperience();
+});
+
+window.addEventListener("resize", () => {
+  measureLyrics();
+  showInitialLyrics();
 });
