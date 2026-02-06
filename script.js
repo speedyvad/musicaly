@@ -54,14 +54,23 @@ let lastBurstIndex = -1;
 const buildLyrics = () => {
   lyricsTrack.innerHTML = "";
   lyrics.forEach((line, index) => {
-    const span = document.createElement("span");
-    span.className = "lyric";
+    const lineSpan = document.createElement("span");
+    lineSpan.className = "lyric";
     if (line.emphasis) {
-      span.classList.add("emphasis");
+      lineSpan.classList.add("emphasis");
     }
-    span.dataset.index = index;
-    span.textContent = line.text;
-    lyricsTrack.appendChild(span);
+    lineSpan.dataset.index = index;
+
+    const words = line.text.split(" ");
+    words.forEach((word, wordIndex) => {
+      const wordSpan = document.createElement("span");
+      wordSpan.className = "lyric__word";
+      wordSpan.dataset.wordIndex = wordIndex;
+      wordSpan.textContent = word + (wordIndex < words.length - 1 ? " " : "");
+      lineSpan.appendChild(wordSpan);
+    });
+
+    lyricsTrack.appendChild(lineSpan);
   });
 };
 
@@ -100,6 +109,21 @@ const updateLyrics = () => {
   document.querySelectorAll(".lyric").forEach((line, index) => {
     line.classList.toggle("visible", index <= currentIndex);
     line.classList.toggle("active", index === currentIndex);
+
+    const words = line.querySelectorAll(".lyric__word");
+    if (index < currentIndex) {
+      line.classList.add("complete");
+      words.forEach((word) => word.classList.add("revealed"));
+    } else if (index === currentIndex) {
+      line.classList.remove("complete");
+      const revealCount = Math.max(1, Math.floor(progress * words.length));
+      words.forEach((word, wordIndex) => {
+        word.classList.toggle("revealed", wordIndex < revealCount);
+      });
+    } else {
+      line.classList.remove("complete");
+      words.forEach((word) => word.classList.remove("revealed"));
+    }
   });
 
   if (currentIndex !== lastBurstIndex && lyrics[currentIndex]?.emphasis) {
@@ -121,6 +145,11 @@ const showInitialLyrics = () => {
   lines.forEach((line, index) => {
     line.classList.toggle("visible", index === 0);
     line.classList.toggle("active", index === 0);
+    line.classList.remove("complete");
+    const words = line.querySelectorAll(".lyric__word");
+    words.forEach((word, wordIndex) => {
+      word.classList.toggle("revealed", index === 0 && wordIndex === 0);
+    });
   });
 };
 
