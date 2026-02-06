@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lisboa — ANAVITÓRIA | Experiência Visual</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="preload" id="preload">
+    <div class="preload__orb"></div>
+    <p>Preparando um gesto de afeto…</p>
+  </div>
+
+  <main class="scene" aria-live="polite">
+    <audio id="audio" preload="auto" crossorigin="anonymous">
+      <source src="audio/lisboa.mp3" type="audio/mpeg" />
+    </audio>
+
+    <section class="lyrics">
+      <div class="lyrics__track" id="lyricsTrack"></div>
+    </section>
+
+    <section class="tree" aria-hidden="true">
+      <svg class="tree__svg" viewBox="0 0 600 900" role="img">
+        <defs>
+          <linearGradient id="heartGlow" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#ffd1d8" />
+            <stop offset="100%" stop-color="#ff8da6" />
+          </linearGradient>
+          <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <path class="tree__branch" d="M300 860 C270 760 280 690 305 600 C330 520 335 460 320 380 C300 290 260 240 210 170" />
+        <path class="tree__branch" d="M300 760 C360 710 400 650 430 570 C455 505 500 470 540 440" />
+        <path class="tree__branch" d="M310 640 C260 620 220 590 190 540 C160 485 130 450 90 420" />
+        <path class="tree__branch" d="M320 520 C360 500 395 470 420 430 C450 380 470 330 480 280" />
+        <g class="tree__hearts" filter="url(#softGlow)">
+          <path class="heart" d="M300 250 C292 230 265 230 260 255 C255 280 280 300 300 320 C320 300 345 280 340 255 C335 230 308 230 300 250 Z" />
+          <path class="heart" d="M210 180 C202 160 175 160 170 185 C165 210 190 230 210 250 C230 230 255 210 250 185 C245 160 218 160 210 180 Z" />
+          <path class="heart" d="M420 380 C412 360 385 360 380 385 C375 410 400 430 420 450 C440 430 465 410 460 385 C455 360 428 360 420 380 Z" />
+          <path class="heart" d="M480 280 C472 260 445 260 440 285 C435 310 460 330 480 350 C500 330 525 310 520 285 C515 260 488 260 480 280 Z" />
+          <path class="heart" d="M150 420 C142 400 115 400 110 425 C105 450 130 470 150 490 C170 470 195 450 190 425 C185 400 158 400 150 420 Z" />
+          <path class="heart" d="M360 600 C352 580 325 580 320 605 C315 630 340 650 360 670 C380 650 405 630 400 605 C395 580 368 580 360 600 Z" />
+          <path class="heart" d="M260 560 C252 540 225 540 220 565 C215 590 240 610 260 630 C280 610 305 590 300 565 C295 540 268 540 260 560 Z" />
+          <path class="heart" d="M520 440 C512 420 485 420 480 445 C475 470 500 490 520 510 C540 490 565 470 560 445 C555 420 528 420 520 440 Z" />
+        </g>
+        <g class="tree__particles" id="particles"></g>
+      </svg>
+    </section>
+
+    <button class="restart" id="restart" type="button">Reiniciar experiência</button>
+
+    <div class="start" id="start">
+      <button class="start__button" type="button">Tocar “Lisboa”</button>
+      <span>Se o som não iniciar sozinho, toque.</span>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
